@@ -1,11 +1,11 @@
-FROM gradle:8.3.0-jdk20
+FROM openjdk:17-jdk-alpine
 
-WORKDIR /
+WORKDIR /app
 
-COPY / .
+COPY ./app /app
 
-RUN ./gradlew installDist
+RUN chmod +x gradlew
 
-CMD ./build/install/app/bin/app
+RUN ./gradlew build
 
-EXPOSE 8090
+CMD ["./build/install/app/bin/app"]
