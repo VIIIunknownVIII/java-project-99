@@ -4,8 +4,6 @@ WORKDIR /app
 
 COPY ./app /app
 
-RUN chmod +x gradlew
+RUN ./gradlew bootJar
 
-RUN ./gradlew build
-
-CMD ["./build/install/app/bin/app"]
+CMD ["java", "-jar", "./build/libs/app-0.0.1-SNAPSHOT.jar"]
