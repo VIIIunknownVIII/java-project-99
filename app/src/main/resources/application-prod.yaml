@@ -12,4 +12,4 @@ spring:
 sentry:
   dsn: ${SENTRY_DSN}
   environment: development
-  traces-sample-rate: 0.1 # Настройте на уровне 10% или ниже для разработки
+  traces-sample-rate: 0.1
