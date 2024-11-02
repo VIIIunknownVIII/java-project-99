@@ -1,14 +1,5 @@
-# Use the Eclipse Temurin Java 20 base image
-FROM eclipse-temurin:20-jdk-alpine
-
-# Set the working directory
+FROM openjdk:20-jdk
 WORKDIR /app
-
-# Copy the pre-built JAR file into the container
-COPY app/build/libs/app-0.0.1-SNAPSHOT.jar /app/app.jar
-
-# Expose the application port
+COPY app/build/libs/*.jar app.jar
 EXPOSE 8080
-
-# Set the entrypoint to run the application
-CMD ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

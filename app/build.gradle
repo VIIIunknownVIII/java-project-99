@@ -79,7 +79,6 @@ dependencies {
     testImplementation("io.rest-assured:spring-mock-mvc:5.5.0")
 }
 
-
 tasks {
     jacocoTestReport {
         dependsOn(test)
