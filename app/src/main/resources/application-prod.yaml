@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: postgresql://java_project_bd_user:g85aQmD8J6yK0Em3HaGU5bIcPPOBKfGr@dpg-csat5hij1k6c73ct30hg-a/java_project_bd
+    url: jdbc:postgresql://dpg-csat5hij1k6c73ct30hg-a/java_project_bd
     username: java_project_bd_user
     password: g85aQmD8J6yK0Em3HaGU5bIcPPOBKfGr
     driver-class-name: org.postgresql.Driver
@@ -8,3 +8,8 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+
+sentry:
+  dsn: ${SENTRY_DSN}
+  environment: development
+  traces-sample-rate: 0.1 # Настройте на уровне 10% или ниже для разработки

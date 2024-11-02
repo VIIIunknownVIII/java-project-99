@@ -1,25 +1,98 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
-	id 'org.springframework.boot' version '3.3.4'
-	id 'io.spring.dependency-management' version '1.1.6'
-	id 'java'
+    id "base"
+    id "application"
+    id "jacoco"
+    id("checkstyle")
+    id("org.springframework.boot") version "3.2.0"
+    id("io.spring.dependency-management") version "1.1.4"
+    id("com.github.ben-manes.versions") version "0.49.0"
+    id("io.freefair.lombok") version "8.4"
+    id "io.sentry.jvm.gradle" version "4.13.0"
 }
 
-group = 'hexlet.code'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+group = "hexlet.code"
+version = "0.0.1-SNAPSHOT"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_20
+}
+
+application {
+    mainClass.set("hexlet.code.AppApplication")
+}
+
+configurations {
+    compileOnly {
+        extendsFrom(configurations.annotationProcessor)
+    }
+}
 
 repositories {
-	mavenCentral()
+    mavenCentral()
+}
+
+checkstyle {
+    toolVersion = "10.18.2"
+}
+
+sentry {
+    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+    // This enables source context, allowing you to see your source
+    // code as part of your stack traces in Sentry.
+    includeSourceContext = true
+    org = "hui-zf"
+    projectName = "java"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	runtimeOnly 'com.h2database:h2'
-	runtimeOnly 'org.postgresql:postgresql'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("net.datafaker:datafaker:2.0.2")
+    implementation("org.instancio:instancio-junit:3.3.0")
+    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
+    implementation("org.mapstruct:mapstruct:1.5.5.Final")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+
+    compileOnly("org.projectlombok:lombok")
+    implementation("io.sentry:sentry-spring-boot-starter:6.22.0")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+    runtimeOnly("com.h2database:h2")
+    runtimeOnly("org.postgresql:postgresql")
+
+    annotationProcessor("org.projectlombok:lombok")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+
+    testImplementation(platform("org.junit:junit-bom:5.10.1"))
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
+    testImplementation("net.javacrumbs.json-unit:json-unit-assertj:3.2.2")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("io.rest-assured:spring-mock-mvc:5.5.0")
 }
 
-test {
-	useJUnitPlatform()
+tasks {
+    jacocoTestReport {
+        dependsOn(test)
+        reports {
+            xml.required = true
+        }
+    }
+
+    test {
+        finalizedBy(jacocoTestReport)
+        useJUnitPlatform()
+        testLogging {
+            exceptionFormat = TestExceptionFormat.FULL
+            events = [TestLogEvent.FAILED, TestLogEvent.PASSED, TestLogEvent.SKIPPED]
+            showStandardStreams = true
+        }
+    }
 }
