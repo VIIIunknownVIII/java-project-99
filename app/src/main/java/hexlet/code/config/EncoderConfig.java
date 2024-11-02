@@ -4,8 +4,10 @@ import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import hexlet.code.component.RsaKeyProperties;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,10 +19,10 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 
 @Configuration
-public class EncodersConfig {
+@AllArgsConstructor(onConstructor_ = @__(@Autowired))
+public class EncoderConfig {
 
-    @Autowired
-    private RsaKeyProperties rsaKeys;
+    private final RsaKeyProperties rsaKeys;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -28,22 +30,15 @@ public class EncodersConfig {
     }
 
     @Bean
-    public JwtDecoder jwtDecoder() {
-        if (rsaKeys.getPublicKey() == null) {
-            throw new IllegalArgumentException("Public key cannot be null");
-        }
-        return NimbusJwtDecoder.withPublicKey(rsaKeys.getPublicKey()).build();
+    JwtEncoder jwtEncoder() {
+        JWK jwk = new RSAKey.Builder(rsaKeys.getPublicKey()).privateKey(rsaKeys.getPrivateKey()).build();
+        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwks);
     }
 
     @Bean
-    public JwtEncoder jwtEncoder() {
-        if (rsaKeys.getPublicKey() == null || rsaKeys.getPrivateKey() == null) {
-            throw new IllegalArgumentException("RSA keys cannot be null");
-        }
-        JWK jwk = new RSAKey.Builder(rsaKeys.getPublicKey())
-                .privateKey(rsaKeys.getPrivateKey())
-                .build();
-        JWKSet jwkSet = new JWKSet(jwk);
-        return new NimbusJwtEncoder(new ImmutableJWKSet<>(jwkSet));
+    JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withPublicKey(rsaKeys.getPublicKey()).build();
     }
+
 }

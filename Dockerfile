@@ -1,5 +1,15 @@
-FROM openjdk:20-jdk
-WORKDIR /app
-COPY app/build/libs/*.jar app.jar
+FROM eclipse-temurin:21-jdk
+
+ARG GRADLE_VERSION=8.8
+
+RUN apt-get update && apt-get install -yq make unzip
+
+WORKDIR /backend
+
+COPY ./ /backend
+
+RUN ./gradlew --no-daemon build
+
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+CMD java -jar build/libs/app-0.0.1-SNAPSHOT.jar

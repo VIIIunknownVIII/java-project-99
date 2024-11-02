@@ -7,21 +7,20 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "task_statuses")
+@Table(name = "taskstatuses")
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-@Accessors(chain = true)
 public class TaskStatus implements BaseEntity {
 
     @Id
@@ -29,11 +28,13 @@ public class TaskStatus implements BaseEntity {
     private Long id;
 
     @Column(unique = true)
-    @NotBlank
+    @NotNull
+    @Size(min = 1)
     private String name;
 
     @Column(unique = true)
-    @NotBlank
+    @NotNull
+    @Size(min = 1)
     private String slug;
 
     @CreatedDate

@@ -1,71 +1,68 @@
 package hexlet.code.model;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
 @Table(name = "users")
-public class User implements UserDetails {
+@EntityListeners(AuditingEntityListener.class)
+@Getter
+@Setter
+@ToString
+public class User implements BaseEntity, UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String firstName;
+    private String lastName;
+
+    @Email
+    @NotNull
+    @Column(unique = true)
     private String email;
-    private String password;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    public Long getId() {
-        return id;
-    }
+    @NotNull
+    @Size(min = 3)
+    @ToString.Exclude
+    private String passwordDigest;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @CreatedDate
+    private LocalDate createdAt;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    @LastModifiedDate
+    private LocalDate updatedAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return new ArrayList<GrantedAuthority>();
+    }
+
+    @Override
+    public String getPassword() {
+        return passwordDigest;
     }
 
     @Override

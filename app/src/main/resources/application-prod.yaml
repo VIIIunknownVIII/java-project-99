@@ -1,15 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://dpg-csat5hij1k6c73ct30hg-a/java_project_bd
-    username: java_project_bd_user
-    password: g85aQmD8J6yK0Em3HaGU5bIcPPOBKfGr
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-
-sentry:
-  dsn: ${SENTRY_DSN}
-  environment: development
-  traces-sample-rate: 0.1
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+    driverClassName: org.postgresql.Driver

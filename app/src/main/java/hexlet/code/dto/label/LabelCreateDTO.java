@@ -12,5 +12,4 @@ public class LabelCreateDTO {
     @NotNull
     @Size(min = 3, max = 1000)
     private String name;
-
 }

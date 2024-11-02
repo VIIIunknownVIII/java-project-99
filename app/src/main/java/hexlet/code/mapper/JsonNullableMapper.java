@@ -9,7 +9,6 @@ import org.openapitools.jackson.nullable.JsonNullable;
         componentModel = MappingConstants.ComponentModel.SPRING
 )
 public abstract class JsonNullableMapper {
-
     public <T> JsonNullable<T> wrap(T entity) {
         return JsonNullable.of(entity);
     }
@@ -18,14 +17,8 @@ public abstract class JsonNullableMapper {
         return jsonNullable == null ? null : jsonNullable.orElse(null);
     }
 
-    /**
-     * Checks whether nullable parameter was passed explicitly.
-     *
-     * @return <i>true</i> if value was set explicitly, <i>false</i> otherwise
-     */
     @Condition
-    public <T> boolean isPresent(JsonNullable<T> nullable) {
-        return nullable != null && nullable.isPresent();
+    public <T> boolean isPresent(JsonNullable<T> jsonNullable) {
+        return jsonNullable != null && jsonNullable.isPresent();
     }
-
 }

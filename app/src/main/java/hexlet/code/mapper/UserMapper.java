@@ -20,33 +20,34 @@ import org.springframework.security.crypto.password.PasswordEncoder;
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
+
 public abstract class UserMapper {
 
+
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder encoder;
 
-    @BeforeMapping
-    public void encryptPassword(UserCreateDTO dto) {
-        var password = dto.getPassword();
-        dto.setPassword(passwordEncoder.encode(password));
+    @Mapping(target = "passwordDigest", source = "password")
+    @Mapping(target = "email", source = "username")
+    public abstract User map(UserCreateDTO userCreateDTO);
 
-    }
-
-    @BeforeMapping
-    public void encryptPasswordUpdate(UserUpdateDTO userUpdateDTO, @MappingTarget User user) {
-        var password = userUpdateDTO.getPassword();
-        if (password != null && password.isPresent()) {
-            user.setPassword(passwordEncoder.encode(password.get()));
-        }
-
-    }
-
-    @Mapping(source = "password", target = "password")
-    public abstract User map(UserCreateDTO dto);
-
+    @Mapping(target = "username", source = "email")
     public abstract UserDTO map(User user);
 
-    @Mapping(source = "password", target = "password")
-    public abstract void update(UserUpdateDTO dto, @MappingTarget User user);
+    @Mapping(target = "email", source = "username")
+    public abstract void update(UserUpdateDTO userUpdateDTO, @MappingTarget User user);
 
+    @BeforeMapping
+    public void encryptPassword(UserCreateDTO userCreateDTO) {
+        String password = userCreateDTO.getPassword();
+        userCreateDTO.setPassword(encoder.encode(password));
+    }
+
+    @BeforeMapping
+    public void encryptPassword(UserUpdateDTO userUpdateDTO) {
+        String password = userUpdateDTO.getPassword();
+        if (password != null) {
+            userUpdateDTO.setPassword(encoder.encode(password));
+        }
+    }
 }

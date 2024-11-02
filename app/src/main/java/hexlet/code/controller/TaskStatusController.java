@@ -1,12 +1,19 @@
 package hexlet.code.controller;
 
-import hexlet.code.dto.taskStatus.TaskStatusCreateDTO;
-import hexlet.code.dto.taskStatus.TaskStatusDTO;
-import hexlet.code.dto.taskStatus.TaskStatusUpdateDTO;
-import hexlet.code.service.TaskStatusService;
+import hexlet.code.dto.taskstatus.TaskStatusCreateDTO;
+import hexlet.code.dto.taskstatus.TaskStatusDTO;
+import hexlet.code.dto.taskstatus.TaskStatusUpdateDTO;
+import hexlet.code.exception.ResourceNotFoundException;
+import hexlet.code.mapper.TaskStatusMapper;
+import hexlet.code.model.TaskStatus;
+import hexlet.code.repository.TaskStatusRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,51 +31,61 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/task_statuses")
-@AllArgsConstructor
+@AllArgsConstructor(onConstructor_ = @__(@Autowired))
 public class TaskStatusController {
 
-    @Autowired
-    private final TaskStatusService taskStatusService;
+    private final TaskStatusMapper taskStatusMapper;
+    private final TaskStatusRepository taskStatusRepository;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<TaskStatusDTO>> getAll() {
-        List<TaskStatusDTO> taskStatuses = taskStatusService.getAllTaskStatuses();
+    public ResponseEntity<List<TaskStatusDTO>> index(@RequestParam(defaultValue = "0") int start,
+                                                     @RequestParam(defaultValue = "2147483647") int end,
+                                                     @RequestParam(defaultValue = "id") String sort,
+                                                     @RequestParam(defaultValue = "ASC") String order) {
+        int page = start / (end - start);
+        Sort.Direction direction = Sort.Direction.fromString(order);
+        Pageable pageable = PageRequest.of(page, end - start, Sort.by(direction, sort));
 
-        return ResponseEntity
-                .ok()
-                .header("X-Total-Count", String.valueOf(taskStatuses.size()))
-                .body(taskStatuses);
+        List<TaskStatusDTO> result =  taskStatusRepository.findAll(pageable).stream()
+                .map(taskStatusMapper::map)
+                .toList();
+
+        return ResponseEntity.ok()
+                .header("X-Total-Count", String.valueOf(result.size()))
+                .body(result);
 
     }
 
-    @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public TaskStatusDTO get(@PathVariable final long id) {
-        return taskStatusService.getTaskStatus(id);
-
+    @GetMapping(path = "/{id}")
+    public TaskStatusDTO show(@PathVariable long id) {
+        TaskStatus result = taskStatusRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Task status with id %d not found", id)));
+        return taskStatusMapper.map(result);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TaskStatusDTO createTaskStatus(@Valid @RequestBody final TaskStatusCreateDTO taskStatusBody) {
-        return taskStatusService.createTaskStatus(taskStatusBody);
-
+    public TaskStatusDTO create(@Valid @RequestBody TaskStatusCreateDTO taskStatusCreateDTO)
+            throws DataIntegrityViolationException {
+        TaskStatus taskStatus = taskStatusMapper.map(taskStatusCreateDTO);
+        taskStatusRepository.save(taskStatus);
+        return taskStatusMapper.map(taskStatus);
     }
 
-    @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public TaskStatusDTO updateTaskStatus(@Valid @RequestBody final TaskStatusUpdateDTO taskStatusBody,
-                                          @PathVariable final long id) {
-        return taskStatusService.updateTaskStatus(taskStatusBody, id);
-
+    @PutMapping(path = "/{id}")
+    public TaskStatusDTO update(@PathVariable long id, @Valid @RequestBody TaskStatusUpdateDTO taskStatusUpdateDTO) {
+        TaskStatus taskStatus = taskStatusRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format("Task status with id %d not found", id)));
+        taskStatusMapper.update(taskStatusUpdateDTO, taskStatus);
+        taskStatusRepository.save(taskStatus);
+        return taskStatusMapper.map(taskStatus);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteTaskStatus(@PathVariable final long id) {
-        taskStatusService.deleteTaskStatus(id);
+    public void delete(@PathVariable long id) {
+        taskStatusRepository.deleteById(id);
     }
-
-
 }

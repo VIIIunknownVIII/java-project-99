@@ -10,10 +10,9 @@ import java.security.interfaces.RSAPublicKey;
 
 @Component
 @ConfigurationProperties(prefix = "rsa")
-@Getter
 @Setter
+@Getter
 public class RsaKeyProperties {
-
     private RSAPublicKey publicKey;
     private RSAPrivateKey privateKey;
 
