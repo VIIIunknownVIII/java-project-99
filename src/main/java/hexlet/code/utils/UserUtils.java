@@ -31,4 +31,3 @@ public class UserUtils {
         return id == getCurrentUserId();
     }
 }
-1

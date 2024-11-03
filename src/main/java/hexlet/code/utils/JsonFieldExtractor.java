@@ -20,7 +20,7 @@ public class JsonFieldExtractor {
 
     public String getFieldAsString(String json, String field) throws JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(json);
-        return jsonNode.get(field).asText();1
+        return jsonNode.get(field).asText();
     }
 
 }

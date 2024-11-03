@@ -26,5 +26,5 @@ public class JwtUtils {
                 .subject(username)
                 .build();
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwtClaimsSet)).getTokenValue();
-    }1
+    }
 }
