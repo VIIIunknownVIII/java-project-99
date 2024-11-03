@@ -23,7 +23,6 @@ WORKDIR /app
 # Обновите путь, если .jar файл имеет другое имя
 COPY build/libs/app-0.0.1-SNAPSHOT.jar application.jar
 
-
 EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "application.jar"]
