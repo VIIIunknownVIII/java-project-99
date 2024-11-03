@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:myDataBase
+    driverClassName: org.h2.Driver
+    username: "java_project_bd_user"
+    password: "g85aQmD8J6yK0Em3HaGU5bIcPPOBKfGr"
+  h2:
+    console:
+      enabled: true
+      path: /h2console/
+      settings:
+        web-allow-others: true

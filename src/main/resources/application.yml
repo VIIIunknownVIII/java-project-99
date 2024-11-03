@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+
+server:
+  port: 8080
+
+rsa:
+  private-key: classpath:certs/private.pem
+  public-key: classpath:certs/public.pem
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
+
+sentry:
+  dsn: https://2cd886fb02e78980b982df6735e8ae82@o4508212482342912.ingest.de.sentry.io/4508228849107024
+  traces-sample-rate: 1.0
