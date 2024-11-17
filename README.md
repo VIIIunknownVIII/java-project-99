@@ -10,4 +10,3 @@ Task Manager is a task management system. It allows you to set tasks, assign per
 This is an educational project based on the Spring Framework.
 
 https://java-project-99-h8nw.onrender.com
->>>>>>> 0ac353c (Описание изменений)
