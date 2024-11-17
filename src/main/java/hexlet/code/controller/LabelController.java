@@ -9,6 +9,7 @@ import hexlet.code.model.Label;
 import hexlet.code.repository.LabelRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +32,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/labels")
-@AllArgsConstructor(onConstructor_ = @__(@Autowired))
+@RequiredArgsConstructor
 public class LabelController {
     private final LabelRepository labelRepository;
     private final LabelMapper labelMapper;
