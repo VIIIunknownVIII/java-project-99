@@ -10,7 +10,6 @@ import hexlet.code.repository.UserRepository;
 import hexlet.code.utils.UserUtils;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +34,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-@RequiredArgsConstructor
+@AllArgsConstructor(onConstructor_ = @__(@Autowired))
 public class UserController {
 
 

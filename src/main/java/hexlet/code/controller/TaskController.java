@@ -12,7 +12,6 @@ import hexlet.code.repository.TaskRepository;
 import hexlet.code.specification.TaskSpecification;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -32,7 +31,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")
-@RequiredArgsConstructor
+@AllArgsConstructor(onConstructor_ = @__(@Autowired))
 public class TaskController {
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
