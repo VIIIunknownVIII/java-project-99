@@ -1,4 +1,4 @@
-name: Java CI
+name: Java CI2
 
 on: [push, pull_request]
 
