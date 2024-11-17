@@ -3,8 +3,7 @@ package hexlet.code.component;
 import hexlet.code.model.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
 import io.sentry.Sentry;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@AllArgsConstructor(onConstructor_ = @__(@Autowired))
+@RequiredArgsConstructor
 public class TaskStatusInitializer implements ApplicationRunner {
 
     private final TaskStatusRepository taskStatusRepository;

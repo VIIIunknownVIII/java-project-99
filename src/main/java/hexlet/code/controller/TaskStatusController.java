@@ -9,7 +9,6 @@ import hexlet.code.model.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +30,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/task_statuses")
-@AllArgsConstructor(onConstructor_ = @__(@Autowired))
+@AllArgsConstructor
 public class TaskStatusController {
 
     private final TaskStatusMapper taskStatusMapper;
@@ -46,14 +45,13 @@ public class TaskStatusController {
         Sort.Direction direction = Sort.Direction.fromString(order);
         Pageable pageable = PageRequest.of(page, end - start, Sort.by(direction, sort));
 
-        List<TaskStatusDTO> result =  taskStatusRepository.findAll(pageable).stream()
+        List<TaskStatusDTO> result = taskStatusRepository.findAll(pageable).stream()
                 .map(taskStatusMapper::map)
                 .toList();
 
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(result.size()))
                 .body(result);
-
     }
 
     @GetMapping(path = "/{id}")
